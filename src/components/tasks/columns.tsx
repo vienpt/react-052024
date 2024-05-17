@@ -1,31 +1,8 @@
 import { ColumnDef } from '@tanstack/react-table'
-import TableColumnActions, {
-  UniqueColumnItem,
-} from '@/components/table-column-action.tsx'
+import TableColumnActions from '@/components/table-column-action.tsx'
 import { Button } from '@/components/ui/button.tsx'
 import { ArrowUpDown } from 'lucide-react'
-
-export interface Task extends UniqueColumnItem {
-  id: string
-  amount: number
-  status: 'pending' | 'processing' | 'success' | 'failed'
-  email: string
-}
-
-export const tasks: Task[] = [
-  {
-    id: '728ed52f',
-    amount: 100,
-    status: 'pending',
-    email: 'm@example.com',
-  },
-  {
-    id: '489e1d42',
-    amount: 125,
-    status: 'processing',
-    email: 'example@gmail.com',
-  },
-]
+import { Task } from '@/lib/interface.ts'
 
 export const columns: ColumnDef<Task>[] = [
   {

@@ -9,10 +9,7 @@ import {
 import { MoreHorizontal } from 'lucide-react'
 import { Button } from '@/components/ui/button.tsx'
 import { useNavigate } from 'react-router-dom'
-
-export interface UniqueColumnItem {
-  [key: string]: unknown
-}
+import { UniqueColumnItem } from '@/lib/interface.ts'
 
 interface TableColumnActionProps<TData extends UniqueColumnItem> {
   /**

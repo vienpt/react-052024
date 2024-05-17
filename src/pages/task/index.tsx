@@ -1,7 +1,9 @@
 import { useParams } from 'react-router-dom'
-import {tasks} from "@/components/tasks/columns.tsx";
+import { useAtom } from 'jotai'
+import tasksAtom from '@/stores/useTasksAtom.ts'
 
 export default function TaskPage() {
+  const [tasks] = useAtom(tasksAtom)
   const params = useParams()
   const taskId = params.id as string
   console.log('taskId', taskId)

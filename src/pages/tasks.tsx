@@ -1,7 +1,10 @@
 import DataTable from '@/components/data-table.tsx'
-import { columns, tasks } from '@/components/tasks/columns.tsx'
+import { columns } from '@/components/tasks/columns.tsx'
+import tasksAtom from '@/stores/useTasksAtom.ts'
+import { useAtom } from 'jotai'
 
 export default function TasksPage() {
+  const [tasks] = useAtom(tasksAtom)
   return (
     <DataTable
       data={tasks}
