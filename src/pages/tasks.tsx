@@ -1,19 +1,27 @@
-import {NavLink, Outlet} from "react-router-dom";
-import { useState } from "react";
+import { Table } from '@/components/ui/table.tsx'
+
+export interface Task {
+  id: string;
+  amount: number;
+  status: 'pending' | 'processing' | 'success' | 'failed';
+  email: string;
+}
+
+export const tasks: Task[] = [
+  {
+    id: '728ed52f',
+    amount: 100,
+    status: 'pending',
+    email: 'm@example.com',
+  },
+  {
+    id: '489e1d42',
+    amount: 125,
+    status: 'processing',
+    email: 'example@gmail.com',
+  },
+]
 
 export default function TasksPage() {
-  const [data] = useState(Array.from({ length: 5 }).map((_, i) => i));
-  return (
-    <div>
-      <h1 className="text-5xl">TasksPage</h1>
-      {data.map((_, index) =>
-        <NavLink key={`task-${index}`} to={`/tasks/${index}`} className={({ isActive}) => isActive ? 'text-green-500' : ''}>
-          {`Task-${index}`}
-        </NavLink>
-      )}
-
-      {/* render task detail page */}
-      <Outlet />
-    </div>
-  )
+  return <Table></Table>
 }

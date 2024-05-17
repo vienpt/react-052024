@@ -6,8 +6,8 @@ interface ErrorPageProps {
 }
 
 export default function Error() {
-  const error = useRouteError() as ErrorPageProps;
-  console.error(error);
+  const error = useRouteError() as ErrorPageProps
+  console.error(error)
 
   return (
     <div id="error-page">
@@ -17,5 +17,5 @@ export default function Error() {
         <i>{error.statusText || error.message}</i>
       </p>
     </div>
-  );
+  )
 }

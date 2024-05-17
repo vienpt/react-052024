@@ -1,7 +1,7 @@
-import BasicForm from "@/components/BasicForm.tsx";
+import AppLayout from '@/components/app/app-layout.tsx'
 
 function App() {
-  return <BasicForm/>
+  return <AppLayout></AppLayout>
 }
 
-export default App;
+export default App
