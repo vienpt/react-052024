@@ -1,27 +1,25 @@
-import { Table } from '@/components/ui/table.tsx'
-
-export interface Task {
-  id: string;
-  amount: number;
-  status: 'pending' | 'processing' | 'success' | 'failed';
-  email: string;
-}
-
-export const tasks: Task[] = [
-  {
-    id: '728ed52f',
-    amount: 100,
-    status: 'pending',
-    email: 'm@example.com',
-  },
-  {
-    id: '489e1d42',
-    amount: 125,
-    status: 'processing',
-    email: 'example@gmail.com',
-  },
-]
+import DataTable from '@/components/data-table.tsx'
+import { columns, tasks } from '@/components/tasks/columns.tsx'
 
 export default function TasksPage() {
-  return <Table></Table>
+  return (
+    <DataTable
+      data={tasks}
+      columns={columns}
+      pagecount={10}
+      pagination={{
+        show: true,
+        sizes: [10, 50, 100, 500],
+        state: {
+          pageIndex: 0,
+          pageSize: 10,
+        },
+      }}
+      //      render={({ pageIndex, pageSize }) => (
+      //        <div>
+      //          hello {pageIndex}-{pageSize}
+      //        </div>
+      //      )}
+    />
+  )
 }
