@@ -9,14 +9,9 @@ export interface Task extends UniqueColumnItem {
   email: string
 }
 
-export interface Post {
+export interface Post extends UniqueColumnItem {
   body: string
   id: number
   title: string
   userId: number
-}
-
-export interface QueryResponse {
-  data: unknown
-  isLoading: boolean
 }

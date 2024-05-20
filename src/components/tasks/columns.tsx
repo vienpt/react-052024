@@ -43,7 +43,7 @@ export const columns: ColumnDef<Task>[] = [
       const task = row.original
       const dataItem = task as Task
 
-      return <TableColumnActions dataItem={dataItem} />
+      return <TableColumnActions dataItem={dataItem} pathName={'tasks'} />
     },
   },
 ]

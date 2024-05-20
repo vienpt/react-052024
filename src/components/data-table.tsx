@@ -51,11 +51,6 @@ interface DataTableProps<TData, TValue> extends HTMLAttributes<HTMLDivElement> {
   }
 
   /**
-   * The page count represent show total page in data table.
-   */
-  pagecount?: number
-
-  /**
    * custom class name
    */
   className?: string
@@ -88,7 +83,6 @@ export default function DataTable<TData, TValue>({
   const table = useReactTable({
     data,
     columns,
-    pageCount: props.pagecount,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),

@@ -17,10 +17,16 @@ interface TableColumnActionProps<TData extends UniqueColumnItem> {
    * @type TData as object
    */
   dataItem: TData
+
+  /**
+   * path item for redirect item
+   */
+  pathName?: string
 }
 
 export default function TableColumnActions<TData extends UniqueColumnItem>({
   dataItem,
+  pathName,
 }: TableColumnActionProps<TData>) {
   const navigate = useNavigate()
 
@@ -37,14 +43,16 @@ export default function TableColumnActions<TData extends UniqueColumnItem>({
         <DropdownMenuItem
           onClick={() => navigator.clipboard.writeText(dataItem.id as string)}
         >
-          Copy task ID
+          Copy item ID
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onClick={() => navigate(`/tasks/${dataItem.id}`, { replace: true })}
-        >
-          View task details
-        </DropdownMenuItem>
+        {pathName ? (
+          <DropdownMenuItem
+            onClick={() => navigate(`${dataItem.id}`, { replace: true })}
+          >
+            View item details
+          </DropdownMenuItem>
+        ) : null}
       </DropdownMenuContent>
     </DropdownMenu>
   )

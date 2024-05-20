@@ -6,6 +6,7 @@ import TaskPage from '@/pages/task/index.tsx'
 import Error from '@/Error.tsx'
 import HomePage from '@/pages/home.tsx'
 import PostsPage from '@/pages/posts.tsx'
+import PostDetailPage from '@/pages/post'
 
 const router = createBrowserRouter([
   {
@@ -32,8 +33,14 @@ const router = createBrowserRouter([
       },
       {
         path: '/posts',
-        element: <PostsPage />
-      }
+        element: <PostsPage />,
+        children: [
+          {
+            path: '/posts/:id',
+            element: <PostDetailPage />
+          }
+        ]
+      },
     ],
   },
 ])

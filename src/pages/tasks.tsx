@@ -1,17 +1,19 @@
 import DataTable from '@/components/data-table.tsx'
 import { columns } from '@/components/tasks/columns.tsx'
-import { useAtom } from 'jotai'
+import { useAtom, useAtomValue } from 'jotai'
 import tasksAtom from '@/stores/useTasksAtom.ts'
+import { postsAtom } from '@/stores/usePostsAtom.ts'
 
 export default function TasksPage() {
   const [tasks] = useAtom(tasksAtom)
+  const posts = useAtomValue(postsAtom)
+  console.log('posts in tasks', posts)
 
   return (
     <>
       <DataTable
         data={tasks}
         columns={columns}
-        pagecount={10}
         pagination={{
           show: true,
           sizes: [10, 50, 100, 500],
