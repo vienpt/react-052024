@@ -19,6 +19,14 @@ export default function AppHeader() {
           Tasks
         </NavLink>
       </li>
+      <li>
+        <NavLink
+          to="/posts"
+          className={({ isActive }) => (isActive ? 'text-blue-600' : '')}
+        >
+          Posts
+        </NavLink>
+      </li>
     </ul>
   )
 }

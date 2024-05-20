@@ -17,7 +17,7 @@ import {
   TableRow,
 } from '@/components/ui/table.tsx'
 import { cn } from '@/lib/utils.ts'
-import { HTMLAttributes, ReactNode, useState, ReactElement, JSX } from 'react'
+import { HTMLAttributes, ReactNode, useState } from 'react'
 import TablePagination from '@/components/table-pagination.tsx'
 import { DEFAULT_PAGE_SIZE } from '@/lib/constant.ts'
 
