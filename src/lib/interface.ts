@@ -15,3 +15,8 @@ export interface Post extends UniqueColumnItem {
   title: string
   userId: number
 }
+
+export interface FetchError {
+  error: string
+  name: string // to maintain context error
+}

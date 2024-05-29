@@ -18,8 +18,8 @@ import {
 } from '@/components/ui/table.tsx'
 import { cn } from '@/lib/utils.ts'
 import { HTMLAttributes, ReactNode, useState } from 'react'
-import TablePagination from '@/components/table-pagination.tsx'
 import { DEFAULT_PAGE_SIZE } from '@/lib/constant.ts'
+import TablePaginationDetail from './table-pagination-details'
 
 interface DataTableProps<TData, TValue> extends HTMLAttributes<HTMLDivElement> {
   /**
@@ -152,7 +152,11 @@ export default function DataTable<TData, TValue>({
       </div>
       {props.pagination.show && (
         <div className="flex flex-col gap-2.5">
-          <TablePagination table={table} pageSizes={props.pagination.sizes} />
+          <TablePaginationDetail
+            data={data}
+            table={table}
+            pageSizes={props.pagination.sizes}
+          />
         </div>
       )}
       {/*{props.render(pagination)}*/}

@@ -19,10 +19,9 @@ export default function PostDetailPage() {
     const validItem = postsItem.findIndex((post) => post.id === +postId)
     if (validItem === -1)
       return (
-        <>
-          <p>Page not found</p>
-        </>
+        <p>Page not found</p>
       )
+
     setPostIdAtom(+postId)
   }
 

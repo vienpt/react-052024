@@ -1,24 +1,33 @@
 import { atom } from 'jotai'
 import { Post } from '@/lib/interface.ts'
 import { atomWithQuery } from 'jotai-tanstack-query'
-
-export const postsAtom = atom<Post[]>([])
+import { fetchData } from '@/lib/utils'
+import { store } from '.'
 
 export const postIdAtom = atom(1)
+export const postsAtom = atom<Post[]>([])
+
+export const derivedPostsAtom = atom(
+  (get) => {
+    const { data } = get(fetchPostsAtom)
+    return data
+  },
+  (_, set, newPosts) => set(postsAtom, newPosts as Post[]),
+)
 
 export const fetchPostItemAtom = atomWithQuery((get) => ({
   queryKey: ['posts', get(postIdAtom)],
-  queryFn: async ({ queryKey: [, id], signal }): Promise<Post> => {
-    const res = await fetch(
-      `https://jsonplaceholder.typicode.com/posts/${id}`,
-      { signal },
-    )
-    if (!res.ok) {
-      throw new Error(`Error fetching post item ${id}`)
-    }
+  queryFn: async ({ queryKey: [, id] }): Promise<Post | null> => {
+    const data = await fetchData<Post>({
+      url: `https://jsonplaceholder.typicode.com/posts/${id}`,
+      name: 'post',
+    })
 
-    const data = await res.json()
-    // const computed = data.filter(heaveComputation) // custom filter, mapping here
+    if ('error' in data) {
+      // Handle error scenario (e.g., display error message)
+      console.error(data.error)
+      return null
+    }
 
     return data
   },
@@ -26,17 +35,20 @@ export const fetchPostItemAtom = atomWithQuery((get) => ({
 
 export const fetchPostsAtom = atomWithQuery(() => ({
   queryKey: ['posts'],
-  queryFn: async ({ signal }): Promise<Post[]> => {
-    const res = await fetch(`https://jsonplaceholder.typicode.com/posts`, {
-      signal,
+  queryFn: async (): Promise<Post[] | null> => {
+    const data = await fetchData<Post[]>({
+      url: 'https://jsonplaceholder.typicode.com/posts',
+      name: 'posts',
     })
-    if (!res.ok) {
-      throw new Error(`Error fetching list posts`)
+
+    if ('error' in data) {
+      // Handle error scenario (e.g., display error message)
+      console.error(data.error)
+      return null
     }
 
-    const data = await res.json()
+    store.set(postsAtom, data)
 
-    console.log('fetch data posts')
     return data
   },
 }))
