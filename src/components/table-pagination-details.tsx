@@ -15,14 +15,8 @@ import {
 } from '@radix-ui/react-icons'
 import { Table } from '@tanstack/react-table'
 import { DEFAULT_PAGE_SIZES } from '@/lib/constant.ts'
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-} from './ui/pagination'
 import PaginationGroup from '@/components/pagination-group.tsx'
+import clsx from 'clsx'
 
 interface TablePaginationDetailProps<TData> {
   data: TData[]
@@ -35,85 +29,12 @@ export default function TablePaginationDetail<TData>({
   pageSizes = DEFAULT_PAGE_SIZES,
   ...props
 }: TablePaginationDetailProps<TData>) {
-  let paginationButtons: unknown[] = []
-  const totalPages = table.getPageCount()
-  const groupPageLimit: number = 3
-  const pageGroups: unknown[] = []
-  for (let i = 0; i < totalPages; i++) {
-    if (i > 0 && i % groupPageLimit === 0) {
-      paginationButtons.push(
-        <PaginationItem>
-          <PaginationEllipsis />
-        </PaginationItem>,
-      )
-      pageGroups.push(paginationButtons)
-      paginationButtons = []
-    }
-
-    paginationButtons.push(
-      <PaginationItem key={i}>
-        <PaginationLink
-          href="#"
-          onClick={() => table.setPageIndex(i)}
-          isActive={i === table.getState().pagination.pageIndex}
-        >
-          {i + 1}
-        </PaginationLink>
-      </PaginationItem>,
-    )
-  }
-
-  if (paginationButtons.length > 0) {
-    if (pageGroups.length > 0) {
-      paginationButtons.unshift(
-        <PaginationItem>
-          <PaginationEllipsis />
-        </PaginationItem>,
-      )
-      pageGroups.push(paginationButtons)
-      paginationButtons = []
-    }
-  }
-
-  const getCurrentPaginationGroup = () => {
-    console.log('pageGroups', pageGroups)
-    for (const i in pageGroups) {
-      if (
-        pageGroups[i].findIndex(
-          (u) => u.key === String(table.getState().pagination.pageIndex),
-        ) !== -1
-      ) {
-        return pageGroups[i]
-      }
-    }
-  }
-
-  // const [currentPageIndex, setCurrentPageIndex] = useState(0)
-  // const currentGroupStartIndex = currentPageIndex * 10 * 3
-  // const currentGroupEndIndex = Math.min(currentGroupStartIndex + 10 * 3, 100)
-  // const displayedItems = data.slice(
-  //   currentGroupStartIndex,
-  //   currentGroupEndIndex,
-  // )
-
-  // const pageCount = table.getPageCount()
-  // console.log('pageCount', pageCount)
-  // const getPageNumbers = useMemo(() => {
-  //   // const totalPages = Math.ceil(
-  //   //   table.getRowCount() / table.getState().pagination.pageSize,
-  //   // )
-  //   // console.log('totalPages', totalPages)
-  //   const listPages = Array.from({ length: pageCount }, (_, i) => i + 1)
-  // return Array.from({ length: Math.ceil(listPages.length / 3) }, (_, i) =>
-  //   listPages.slice(i * 3, (i + 1) * 3),
-  // )
-  // }, [pageCount])
-  // console.log('getPageNumbers', getPageNumbers)
-  //
-
   return (
     <div
-      className="flex w-full flex-col-reverse items-center justify-between gap-4 overflow-auto p-1 sm:flex-row sm:gap-8"
+      className={clsx([
+        'flex w-full flex-col-reverse items-center justify-between gap-4 overflow-auto p-1',
+        'sm:flex-row sm:gap-8',
+      ])}
       {...props}
     >
       <div className="flex-1 whitespace-nowrap text-sm text-muted-foreground">
@@ -166,7 +87,7 @@ export default function TablePaginationDetail<TData>({
           >
             <ChevronLeftIcon className="size-4" aria-hidden="true" />
           </Button>
-          <PaginationGroup totalPages={totalPages} table={table} />
+          <PaginationGroup totalPages={table.getPageCount()} table={table} />
           <Button
             aria-label="Go to next page"
             variant="outline"

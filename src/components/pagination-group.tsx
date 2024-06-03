@@ -12,77 +12,65 @@ interface PaginationGroupProps<TData> {
   table: Table<TData>
 }
 
+const pagesPerGroup = 3
+
 export default function PaginationGroup<TData>({
   totalPages,
   table,
 }: PaginationGroupProps<TData>) {
-  const [nextPageGroups, setNextPageGroup] = useState(0)
+  const [currentGroup, setCurrentGroup] = useState(0)
+  const totalGroups = Math.ceil(totalPages / pagesPerGroup)
+  const currentPageIndex = table.getState().pagination.pageIndex
 
-  const pageGroups = []
-  for (let i: number = 0; i < totalPages; i++) {
-    const pageIndex: number = Math.floor(i / 3)
-    if (!pageGroups[pageIndex]) {
-      pageGroups[pageIndex] = []
-    }
-    pageGroups[pageIndex].push(i) // Add page index to the current group
-  }
+  const pageGroups = Array.from({ length: totalGroups }, (_, groupIndex) =>
+    Array.from(
+      { length: pagesPerGroup },
+      (_, pageIndex) => groupIndex * pagesPerGroup + pageIndex,
+    ).filter((pageIndex) => pageIndex < totalPages),
+  )
 
   useEffect(() => {
-    table.setPageIndex(nextPageGroups * 3)
-  }, [nextPageGroups])
+    table.setPageIndex(currentGroup * pagesPerGroup)
+  }, [currentGroup, table])
 
-  // useEffect(() => {
-  //   const nextPage = table.getState().pagination.pageIndex + 1
-  //   console.log('next page', nextPage)
-  //   if (nextPage > table.getState().pagination.pageIndex) {
-  //     table.setPageIndex(nextPageGroups * 3)
-  //   }
-
-  //   // table.setPageIndex(nextPage - 1)
-  // }, [])
+  useEffect(() => {
+    const newGroup = Math.floor(currentPageIndex / pagesPerGroup)
+    setCurrentGroup(newGroup)
+  }, [currentPageIndex])
 
   return (
     <PaginationContent>
       {pageGroups.map((pageGroup, groupIndex) => (
         <Fragment key={groupIndex}>
-          {nextPageGroups === groupIndex && groupIndex > 0 && (
-            <PaginationItem
-              onClick={() => setNextPageGroup((prev) => prev - 1)}
-            >
-              <PaginationLink href="#">
+          {currentGroup === groupIndex && groupIndex > 0 && (
+            <PaginationItem onClick={() => setCurrentGroup((prev) => prev - 1)}>
+              <PaginationLink href="#" aria-label="Previous Page Group">
                 <PaginationEllipsis />
               </PaginationLink>
             </PaginationItem>
           )}
-          {pageGroup.map((pageIndex) => (
-            <Fragment key={pageIndex}>
-              {nextPageGroups === groupIndex ? (
-                <PaginationItem>
-                  <PaginationLink
-                    href="#"
-                    onClick={() => {
-                      table.setPageIndex(pageIndex)
-                    }}
-                    isActive={
-                      pageIndex === table.getState().pagination.pageIndex
-                    }
-                  >
-                    {pageIndex + 1}
-                  </PaginationLink>
-                </PaginationItem>
-              ) : null}
-            </Fragment>
-          ))}
-          {nextPageGroups === groupIndex &&
-            groupIndex < pageGroups.length - 1 && (
-              <PaginationItem
-                onClick={() => setNextPageGroup((prev) => prev + 1)}
-              >
-                <PaginationLink href="#">
-                  <PaginationEllipsis />
+          {currentGroup === groupIndex &&
+            pageGroup.map((pageIndex) => (
+              <PaginationItem key={pageIndex}>
+                <PaginationLink
+                  href="#"
+                  onClick={() => table.setPageIndex(pageIndex)}
+                  isActive={pageIndex === currentPageIndex}
+                  aria-current={
+                    pageIndex === currentPageIndex ? 'page' : undefined
+                  }
+                >
+                  {pageIndex + 1}
                 </PaginationLink>
               </PaginationItem>
-            )}
+            ))}
+          {currentGroup === groupIndex && groupIndex < totalGroups - 1 && (
+            <PaginationItem onClick={() => setCurrentGroup((prev) => prev + 1)}>
+              <PaginationLink href="#" aria-label="Next Page Group">
+                <PaginationEllipsis />
+              </PaginationLink>
+            </PaginationItem>
+          )}
         </Fragment>
       ))}
     </PaginationContent>
