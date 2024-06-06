@@ -27,6 +27,7 @@ import { CalendarIcon } from '@radix-ui/react-icons'
 import { cn } from '@/lib/utils.ts'
 import { Calendar } from '@/components/ui/calendar.tsx'
 import { format, formatISO } from 'date-fns'
+import { useEffect } from 'react'
 
 const formSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email' }).trim(),
@@ -42,9 +43,8 @@ const formSchema = z.object({
     .trim(),
   userName: z
     .string()
-    .min(2, {
-      message: 'Username must be at least 2 characters',
-    })
+    .min(1, { message: 'userName is required' })
+    .min(3, { message: 'Username must be at least 3 characters' })
     .trim(),
   office: z.object({
     name: z
@@ -53,12 +53,12 @@ const formSchema = z.object({
         message: 'Office name must be at least 5 characters',
       })
       .trim(),
-    city: z.string({
-      required_error: 'Please select your current city',
+    city: z.string().min(1, {
+      message: 'Please select your current city',
     }),
     // city: z.string().optional()
     dob: z.date({
-      required_error: 'Please select your dob',
+      required_error: 'Please select a date and time',
     }),
   }),
 })
@@ -73,21 +73,30 @@ export default function FormHook() {
       password: '',
       office: {
         name: '',
-        city: undefined,
-        // city: 'Ho Chi Minh'
-        dob: undefined,
+        city: '',
       },
     },
   })
+
+  // const watchOfficeDob = form.watch('office.dob', undefined)
 
   function onSubmit(values: FormHookProps) {
     const newValues = {
       ...values,
       dob: formatISO(values.office.dob, { format: 'basic' }),
     }
-    console.log('value', values)
     console.log('newValue', newValues)
+
+    form.reset()
   }
+
+  useEffect(() => {
+    form.reset()
+  }, [form.reset])
+
+  // useEffect(() => {
+  //   console.log('watchOfficeDob', watchOfficeDob)
+  // }, [watchOfficeDob])
 
   return (
     <>
@@ -182,6 +191,7 @@ export default function FormHook() {
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
+                  value={field.value}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -189,7 +199,7 @@ export default function FormHook() {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent className="bg-white">
-                    <SelectItem value="Ho Chi Minh">Ho Chi Minh</SelectItem>
+                    <SelectItem value="HoChiMinh">Ho Chi Minh</SelectItem>
                     <SelectItem value="Berlin">Berlin</SelectItem>
                     <SelectItem value="Manchester">Manchester</SelectItem>
                   </SelectContent>

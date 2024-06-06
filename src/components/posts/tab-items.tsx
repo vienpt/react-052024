@@ -1,11 +1,17 @@
-import { DialogClose } from "@radix-ui/react-dialog";
-import { Button } from "../ui/button";
-import { DialogCustomContent, DialogFooter } from "../ui/dialog";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card";
-import FormHook from "../form-hook";
+import { Button } from '../ui/button'
+import { DialogCustomContent, DialogFooter } from '../ui/dialog'
+import { Input } from '../ui/input'
+import { Label } from '../ui/label'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '../ui/card'
+import FormHook from '../form-hook'
 
 export default function TabItems() {
   return (
@@ -16,9 +22,11 @@ export default function TabItems() {
           <TabsTrigger value="password">Password</TabsTrigger>
           <TabsTrigger value="data">General Data Information</TabsTrigger>
         </TabsList>
+
         <TabsContent value="account" className="py-6">
           <FormHook />
         </TabsContent>
+
         <TabsContent value="password">
           <Card>
             <CardHeader>
@@ -43,11 +51,11 @@ export default function TabItems() {
           </Card>
         </TabsContent>
       </Tabs>
-      <DialogFooter>
+      {/* <DialogFooter>
         <DialogClose asChild>
           <Button type="submit">Save changes</Button>
         </DialogClose>
-      </DialogFooter>
+      </DialogFooter> */}
     </DialogCustomContent>
   )
 }
