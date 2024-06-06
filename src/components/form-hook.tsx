@@ -1,16 +1,28 @@
-import { z } from 'zod'
 import { Button } from '@/components/ui/button'
-import { useForm } from 'react-hook-form'
+import { Calendar } from '@/components/ui/calendar.tsx'
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command'
 import {
   Form,
   FormControl,
+  // FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from '@/components/ui/form.tsx'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { Input } from '@/components/ui/input.tsx'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover.tsx'
 import {
   Select,
   SelectContent,
@@ -18,16 +30,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select.tsx'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover.tsx'
-import { CalendarIcon } from '@radix-ui/react-icons'
+import { useToast } from '@/components/ui/use-toast'
 import { cn } from '@/lib/utils.ts'
-import { Calendar } from '@/components/ui/calendar.tsx'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { CalendarIcon, CaretSortIcon, CheckIcon } from '@radix-ui/react-icons'
 import { format, formatISO } from 'date-fns'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 
 const formSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email' }).trim(),
@@ -61,10 +71,28 @@ const formSchema = z.object({
       required_error: 'Please select a date and time',
     }),
   }),
+  language: z.string({
+    required_error: 'Please select a language.',
+  }),
 })
 type FormHookProps = z.infer<typeof formSchema>
 
+const languages = [
+  { label: 'English', value: 'en' },
+  { label: 'French', value: 'fr' },
+  { label: 'German', value: 'de' },
+  { label: 'Spanish', value: 'es' },
+  { label: 'Portuguese', value: 'pt' },
+  { label: 'Russian', value: 'ru' },
+  { label: 'Japanese', value: 'ja' },
+  { label: 'Korean', value: 'ko' },
+  { label: 'Chinese', value: 'zh' },
+] as const
+
 export default function FormHook() {
+  const [open, setOpen] = useState(false)
+  const [openCalendar, setOpenCalendar] = useState(false)
+  const { toast } = useToast()
   const form = useForm<FormHookProps>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -75,6 +103,7 @@ export default function FormHook() {
         name: '',
         city: '',
       },
+      // language: '',
     },
   })
 
@@ -88,6 +117,17 @@ export default function FormHook() {
     console.log('newValue', newValues)
 
     form.reset()
+
+    toast({
+      title: 'You submitted the following values:',
+      description: (
+        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+          <code className="text-white">
+            {JSON.stringify(newValues, null, 2)}
+          </code>
+        </pre>
+      ),
+    })
   }
 
   useEffect(() => {
@@ -154,6 +194,7 @@ export default function FormHook() {
                   <Input
                     placeholder="Enter your password"
                     type="password"
+                    autoComplete="on"
                     {...field}
                   />
                 </FormControl>
@@ -218,7 +259,7 @@ export default function FormHook() {
                   htmlFor="office.dob"
                   invalid={fieldState.invalid}
                 />
-                <Popover>
+                <Popover open={openCalendar} onOpenChange={setOpenCalendar}>
                   <PopoverTrigger asChild>
                     <FormControl>
                       <Button
@@ -242,11 +283,81 @@ export default function FormHook() {
                       mode="single"
                       selected={field.value}
                       onSelect={field.onChange}
+                      onDayClick={() => setOpenCalendar(false)}
                       disabled={(date) =>
                         date > new Date() || date < new Date('1900-01-01')
                       }
                       initialFocus
                     />
+                  </PopoverContent>
+                </Popover>
+                <FormMessageValidate />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="language"
+            render={({ field, fieldState }) => (
+              <FormItem className="flex flex-col">
+                <FormLabelValidate
+                  label={'Language'}
+                  htmlFor="language"
+                  invalid={fieldState.invalid}
+                />
+                <Popover open={open} onOpenChange={setOpen}>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        className={cn(
+                          'w-[200px] justify-between',
+                          !field.value && 'text-muted-foreground',
+                        )}
+                      >
+                        {field.value
+                          ? languages.find(
+                              (language) => language.value === field.value,
+                            )?.label
+                          : 'Select language'}
+                        <CaretSortIcon className="ml-2 size-4 shrink-0 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[200px] p-0">
+                    <Command>
+                      <CommandInput
+                        placeholder="Search language..."
+                        className="h-9"
+                      />
+                      <CommandList>
+                        <CommandEmpty>No language found.</CommandEmpty>
+                        <CommandGroup>
+                          {languages.map((language) => (
+                            <CommandItem
+                              value={language.label}
+                              key={language.value}
+                              onSelect={() => {
+                                form.clearErrors('language')
+                                form.setValue('language', language.value)
+                                setOpen(false)
+                              }}
+                            >
+                              {language.label}
+                              <CheckIcon
+                                className={cn(
+                                  'ml-auto size-4',
+                                  language.value === field.value
+                                    ? 'opacity-100'
+                                    : 'opacity-0',
+                                )}
+                              />
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
                   </PopoverContent>
                 </Popover>
                 <FormMessageValidate />
@@ -261,6 +372,25 @@ export default function FormHook() {
           </div>
         </form>
       </Form>
+      <div className="flex-1 text-center">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => {
+            toast({
+              title: 'Scheduled: Catch up ',
+              description: 'Friday, February 10, 2023 at 5:57 PM',
+              // action: (
+              //   <ToastAction altText="Goto schedule to undo">
+              //     Undo
+              //   </ToastAction>
+              // ),
+            })
+          }}
+        >
+          Add to calendar
+        </Button>
+      </div>
     </>
   )
 }
